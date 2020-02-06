@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer;
 using Entities;
+using Entities.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,73 +16,68 @@ namespace BusinessLogicalLayer
     /// </summary>
     public class GeneroBLL : IEntityCRUD<Genero>
     {
-
-        private GeneroDAL dal = new GeneroDAL();
-
-        public Response Insert(Genero item)
-        {
-            Response response = Validate(item);
-            if (response.Erros.Count > 0)
-            {
-                response.Sucesso = false;
-                return response;
-            }
-
-            return dal.Insert(item);
-        
-        }
-        public Response Update(Genero item)
-        {
-            Response response = Validate(item);
-            if (response.Erros.Count > 0)
-            {
-                response.Sucesso = false;
-                return response;
-            }
-
-            return dal.Update(item);
-        }
         public Response Delete(int id)
         {
-            Response response = new Response();
-            if (id <= 0)
-            {
-                response.Erros.Add("ID do cliente não foi informado.");
-            }
-            if (response.Erros.Count != 0)
-            {
-                response.Sucesso = false;
-                return response;
-            }
-            return dal.Delete(id);
-        }
+            //Validacoes 
 
-        public DataResponse<Genero> GetData()
-        {
-            return dal.GetData();
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                Genero GeneroSerExcluido = new Genero();
+                GeneroSerExcluido.ID = id;
+                db.Entry<Genero>(GeneroSerExcluido).State = System.Data.Entity.EntityState.Deleted;
+                db.SaveChanges();
+            }
+
+            return new Response();
+
         }
 
         public DataResponse<Genero> GetByID(int id)
         {
-            return dal.GetByID(id);
+            //Validacoes 
+
+            DataResponse<Genero> response = new DataResponse<Genero>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                response.Data.Add(db.Generos.Where(x => x.ID == id).FirstOrDefault());
+            }
+            return response;
         }
-        private Response Validate(Genero item)
+
+        public DataResponse<Genero> GetData()
+        {
+            Entities.Entities.DataResponse<Genero> response = new DataResponse<Genero>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                response.Data = db.Generos.ToList();
+            }
+
+            return response;
+        }
+
+        public Response Insert(Genero item)
         {
             Response response = new Response();
-            if (string.IsNullOrWhiteSpace(item.Nome))
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                response.Erros.Add("O nome do gênero deve ser informado.");
+                db.Generos.Add(item);
+                db.SaveChanges();
             }
-            else
+            return response;
+        }
+
+        public Response Update(Genero item)
+        {
+            Response response = new Response();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                //Remove espaços em branco no começo e no final da string.
-                item.Nome = item.Nome.Trim();
-                //Remove espaços extras entre as palavras, ex: "A      B", ficaria "A B".
-                item.Nome = Regex.Replace(item.Nome, @"\s+", " ");
-                if (item.Nome.Length < 2 || item.Nome.Length > 50)
-                {
-                    response.Erros.Add("O nome do gênero deve conter entre 2 e 50 caracteres");
-                }
+                Genero genero = db.Generos.Where(x => x.ID == item.ID).FirstOrDefault();
+                genero = item;
+                db.SaveChanges();
             }
             return response;
         }

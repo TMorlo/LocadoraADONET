@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer;
 using Entities;
+using Entities.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,94 +16,68 @@ namespace BusinessLogicalLayer
     /// </summary>
     public class ClienteBLL : IEntityCRUD<Cliente>
     {
-        private ClienteDAL dal = new ClienteDAL();
-        public Response Insert(Cliente item)
-        {
-            Response response = Validate(item);
-            //Se encontramos erros de validação, retorne-os!
-            if (response.Erros.Count > 0)
-            {
-                response.Sucesso = false;
-                return response;
-            }
-
-            //Se chegou aqui, bora pro DAL!
-            //Retorna a resposta do DAL! Se tiver dúvidas do que é esta resposta,
-            //analise o método do DAL!
-            return dal.Insert(item);
-
-        }
         public Response Delete(int id)
         {
-            Response response = new Response();
-            if (id <= 0)
-            {
-                response.Erros.Add("ID do cliente não foi informado.");
-            }
-            if (response.Erros.Count != 0)
-            {
-                response.Sucesso = false;
-                return response;
-            }
-            return dal.Delete(id);
-        }
+            //Validacoes 
 
-        public Response Update(Cliente item)
-        {
-            Response response = Validate(item);
-            //TODO: Verificar a existência desse gênero na base de dados
-            //generoBLL.LerID(item.GeneroID);
-            //Verifica se tem erros!
-            if (response.Erros.Count != 0)
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                response.Sucesso = false;
-                return response;
+                Cliente ClienteSerExcluido = new Cliente();
+                ClienteSerExcluido.ID = id;
+                db.Entry<Cliente>(ClienteSerExcluido).State = System.Data.Entity.EntityState.Deleted;
+                db.SaveChanges();
             }
-            return dal.Update(item);
-        }
 
-        public DataResponse<Cliente> GetData()
-        {
-            return dal.GetData();
+            return new Response();
+
         }
 
         public DataResponse<Cliente> GetByID(int id)
         {
-            return dal.GetByID(id);
+            //Validacoes 
+
+            DataResponse<Cliente> response = new DataResponse<Cliente>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                response.Data.Add(db.Clientes.Where(x => x.ID == id).FirstOrDefault());
+            }
+            return response;
         }
 
-        private Response Validate(Cliente item)
+        public DataResponse<Cliente> GetData()
+        {
+            DataResponse<Cliente> response = new DataResponse<Cliente>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                response.Data = db.Clientes.ToList();
+            }
+
+            return response;
+        }
+
+        public Response Insert(Cliente item)
         {
             Response response = new Response();
-            if (string.IsNullOrWhiteSpace(item.Nome))
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                response.Erros.Add("O nome do cliente deve ser informado.");
+                db.Clientes.Add(item);
+                db.SaveChanges();
             }
-            else
+            return response;
+        }
+
+        public Response Update(Cliente item)
+        {
+            Response response = new Response();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                //Remove espaços em branco no começo e no final da string.
-                item.Nome = item.Nome.Trim();
-                //Remove espaços extras entre as palavras, ex: "A      B", ficaria "A B".
-                item.Nome = Regex.Replace(item.Nome, @"\s+", " ");
-                if (item.Nome.Length < 2 || item.Nome.Length > 50)
-                {
-                    response.Erros.Add("O nome do cliente deve conter entre 2 e 50 caracteres");
-                }
-            }
-            if (string.IsNullOrWhiteSpace(item.Email))
-            {
-                response.Erros.Add("O email do cliente deve ser informado.");
-            }
-            else
-            {
-                //Remove espaços em branco no começo e no final da string.
-                item.Email = item.Email.Trim();
-                //Remove espaços extras entre as palavras, ex: "A      B", ficaria "A B".
-                item.Email = Regex.Replace(item.Email, @"\s+", " ");
-                if (item.Email.Length < 5 || item.Email.Length > 50)
-                {
-                    response.Erros.Add("O email do cliente deve conter entre 2 e 50 caracteres");
-                }
+                Cliente cliente = db.Clientes.Where(x => x.ID == item.ID).FirstOrDefault();
+                cliente = item;
+                db.SaveChanges();
             }
             return response;
         }

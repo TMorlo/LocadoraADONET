@@ -7,117 +7,175 @@ using Entities;
 using DataAccessLayer;
 using Entities.ResultSets;
 using Entities.Enums;
+using Entities.Entities;
 
 namespace BusinessLogicalLayer
 {
     public class FilmeBLL : IEntityCRUD<Filme>, IFilmeService
     {
-        private FilmeDAL filmeDAL = new FilmeDAL();
-
         public Response Delete(int id)
         {
-            Response response = new Response();
-            if (id<= 0)
+            //Validacoes 
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                response.Erros.Add("ID do filme não foi informado.");
+                Filme filmeSerExcluido = new Filme();
+                filmeSerExcluido.ID = id;
+                db.Entry<Filme>(filmeSerExcluido).State = System.Data.Entity.EntityState.Deleted;
+                db.SaveChanges();
             }
-            if (response.Erros.Count != 0)
-            {
-                response.Sucesso = false;
-                return response;
-            }
-            return filmeDAL.Delete(id);
+
+            return new Response();
+
         }
 
         public DataResponse<Filme> GetByID(int id)
         {
-            return filmeDAL.GetByID(id);
+            //Validacoes 
+
+            DataResponse<Filme> response = new DataResponse<Filme>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                response.Data.Add(db.Filmes.Where(x => x.ID == id).FirstOrDefault());
+            }
+            return response;
         }
 
         public DataResponse<Filme> GetData()
         {
-            return filmeDAL.GetData();
+            DataResponse<Filme> response = new DataResponse<Filme>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                response.Data = db.Filmes.ToList();
+            }
+
+            return response;
         }
 
         public DataResponse<FilmeResultSet> GetFilmes()
         {
-            return filmeDAL.GetFilmes();
+            DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                List <Filme> filmes = db.Filmes.ToList();
+
+                foreach(Filme filme in filmes)
+                {
+                    FilmeResultSet filmeResultSet = new FilmeResultSet()
+                    {
+                        Nome = filme.Nome,
+                        Classificacao = filme.Classificacao,
+                        Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
+                        ID = filme.ID
+                    };
+
+                    response.Data.Add(filmeResultSet);
+                }
+            }
+
+            return response;
         }
 
         public DataResponse<FilmeResultSet> GetFilmesByClassificacao(Classificacao classificacao)
         {
-            return filmeDAL.GetFilmesByClassificacao(classificacao);
+            DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
+            {
+                List<Filme> filmes = db.Filmes.Where(x => x.Classificacao.Equals(classificacao)).ToList();
+
+                foreach (Filme filme in filmes)
+                {
+                    FilmeResultSet filmeResultSet = new FilmeResultSet()
+                    {
+                        Nome = filme.Nome,
+                        Classificacao = filme.Classificacao,
+                        Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
+                        ID = filme.ID
+                    };
+
+                    response.Data.Add(filmeResultSet);
+                }
+            }
+
+            return response;
         }
 
         public DataResponse<FilmeResultSet> GetFilmesByGenero(int genero)
         {
-            if (genero <= 0)
+            DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
-                response.Sucesso = false;
-                response.Erros.Add("Gênero deve ser informado.");
-                return response;
+                List <Filme> filmes = db.Filmes.Where(x => x.GeneroID == genero).ToList();
+
+                foreach(Filme filme in filmes)
+                {
+                    FilmeResultSet filmeResultSet = new FilmeResultSet()
+                    {
+                        Nome = filme.Nome,
+                        Classificacao = filme.Classificacao,
+                        Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
+                        ID = filme.ID
+                    };
+
+                    response.Data.Add(filmeResultSet);
+                }
             }
-            return filmeDAL.GetFilmesByGenero(genero);
+
+            return response;
         }
 
         public DataResponse<FilmeResultSet> GetFilmesByName(string nome)
         {
-            if (string.IsNullOrWhiteSpace(nome))
+            DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
-                response.Sucesso = false;
-                response.Erros.Add("Nome deve ser informado.");
-                return response;
+                List<Filme> filmes = db.Filmes.Where(x => x.Nome.Contains(nome)).ToList();
+
+                foreach (Filme filme in filmes)
+                {
+                    FilmeResultSet filmeResultSet = new FilmeResultSet()
+                    {
+                        Nome = filme.Nome,
+                        Classificacao = filme.Classificacao,
+                        Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
+                        ID = filme.ID
+                    };
+
+                    response.Data.Add(filmeResultSet);
+                }
             }
-            nome = nome.Trim();
-            return filmeDAL.GetFilmesByName(nome);
+
+            return response;
         }
 
         public Response Insert(Filme item)
         {
-            Response response = Validate(item);
-            //TODO: Verificar a existência desse gênero na base de dados
-            //generoBLL.LerID(item.GeneroID);
+            Response response = new Response();
 
-            //Verifica se tem erros!
-            if (response.Erros.Count != 0)
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                response.Sucesso = false;
-                return response;
+                db.Filmes.Add(item);
+                db.SaveChanges();
             }
-            return filmeDAL.Insert(item);
+            return response;
         }
+
         public Response Update(Filme item)
-        {
-           Response response = Validate(item);
-            //TODO: Verificar a existência desse gênero na base de dados
-            //generoBLL.LerID(item.GeneroID);
-            //Verifica se tem erros!
-            if (response.Erros.Count != 0)
-            {
-                response.Sucesso = false;
-                return response;
-            }
-            return filmeDAL.Update(item);
-        }
-
-        private Response Validate(Filme item)
         {
             Response response = new Response();
 
-            if (item.Duracao <= 10)
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                response.Erros.Add("Duração não pode ser menor que 10 minutos.");
+                Filme filme = db.Filmes.Where(x => x.ID == item.ID).FirstOrDefault();
+                filme = item;       
+                db.SaveChanges();
             }
-
-            if (item.DataLancamento == DateTime.MinValue
-                                    ||
-                item.DataLancamento > DateTime.Now)
-            {
-                response.Erros.Add("Data inválida.");
-            }
-
             return response;
         }
     }
