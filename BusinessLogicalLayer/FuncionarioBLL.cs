@@ -28,14 +28,21 @@ namespace BusinessLogicalLayer
 
             using (LocadoraDbContext db = new LocadoraDbContext())
             {
-                FuncionarioLogar.Data.Add(db.Funcionarios.FirstOrDefault(x => (x.Email == email && x.Senha == senha)));
+                Funcionario f = new Funcionario();
 
-                if(FuncionarioLogar.Data.Count == 0)
+                f = db.Funcionarios.FirstOrDefault(x => (x.Email == email && x.Senha == senha));
+
+                if (f == null)
                 {
-                    User.FuncionarioLogado = FuncionarioLogar.Data[0];
-                    FuncionarioLogar.Sucesso = true;
+                    FuncionarioLogar.Sucesso = false;
+                    FuncionarioLogar.Erros.Add("O funcionario nao foi encontrado");
+                    return FuncionarioLogar;
                 }
-                FuncionarioLogar.Sucesso = false;
+
+                FuncionarioLogar.Data.Add(f);
+                User.FuncionarioLogado = FuncionarioLogar.Data[0];
+                FuncionarioLogar.Sucesso = true;
+
             }
 
             return FuncionarioLogar;
@@ -117,7 +124,7 @@ namespace BusinessLogicalLayer
             {
                 return response;
             }
-               
+
 
             using (LocadoraDbContext db = new LocadoraDbContext())
             {

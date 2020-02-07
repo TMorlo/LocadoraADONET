@@ -17,7 +17,7 @@ namespace DataAccessLayer
 
         public LocadoraDbContext() : base(SqlData.ConnectionString)
         {
-            Database.SetInitializer(new XxxLocadoraTesteStrategy());
+            //Database.SetInitializer(new XxxLocadoraTesteStrategy());
         }
 
         public DbSet<Cliente> Clientes { get; set; }

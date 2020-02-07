@@ -30,9 +30,7 @@ namespace BusinessLogicalLayer
 
         public Response EfetuarLocacao(Locacao locacao)
         {
-            Response response = new Response();
-
-            response = Validates.ValidateLocacao.ValidateIdLocacao(locacao.ID);
+            Response response = Validates.ValidateLocacao.ValidateLocacaoObj(locacao);
 
             if (response.HasErrors())
             {
@@ -43,6 +41,7 @@ namespace BusinessLogicalLayer
             {
                 db.Locacoes.Add(locacao);
                 db.SaveChanges();
+                response.Sucesso = true; 
             }
             return response;
         }

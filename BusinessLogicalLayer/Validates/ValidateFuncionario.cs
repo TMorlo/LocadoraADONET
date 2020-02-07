@@ -50,19 +50,19 @@ namespace BusinessLogicalLayer.Validates
             Response response = new Response();
 
 
-            Regex sen = new Regex("@(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{4,8})$");
-            if (!sen.IsMatch(Senha))
-            {
-                response.Erros.Add("SENHA INVÁLIDA");
-            }
+            //Regex sen = new Regex("@(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{4,8})$");
+            //if (!sen.IsMatch(Senha))
+            //{
+            //    response.Erros.Add("SENHA INVÁLIDA");
+            //}
 
-            Regex rg = new Regex(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
+            //Regex rg = new Regex(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
 
 
-            if (!rg.IsMatch(Email))
-            {
-                response.Erros.Add("Email informado está invalido !!");
-            }
+            //if (!rg.IsMatch(Email))
+            //{
+            //    response.Erros.Add("Email informado está invalido !!");
+            //}
 
             response.Sucesso = !(response.HasErrors());
 

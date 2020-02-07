@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Entities.Enums;
 using Entities;
 using Entities.ResultSets;
+using Entities.Entities;
 
 namespace WFPresentationLayer
 {
