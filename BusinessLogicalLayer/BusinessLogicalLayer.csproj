@@ -61,6 +61,11 @@
     <Compile Include="Security\HashUtils.cs" />
     <Compile Include="Security\SenhaValidator.cs" />
     <Compile Include="Security\User.cs" />
+    <Compile Include="Validates\ValidateCliente.cs" />
+    <Compile Include="Validates\ValidateFilme.cs" />
+    <Compile Include="Validates\ValidateFuncionario.cs" />
+    <Compile Include="Validates\ValidateGenero.cs" />
+    <Compile Include="Validates\ValidateLocacao.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">

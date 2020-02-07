@@ -1,12 +1,9 @@
-﻿using DataAccessLayer;
+﻿using BusinessLogicalLayer.Validates;
+using DataAccessLayer;
 using Entities;
 using Entities.Entities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace BusinessLogicalLayer
 {
@@ -20,15 +17,25 @@ namespace BusinessLogicalLayer
         {
             //Validacoes 
 
+            Response response = new Response();
+
+            response = ValidateCliente.ValidateIdCliente(id);
+
+            if (response.HasErrors())
+            {
+                return response;
+            }
+
             using (LocadoraDbContext db = new LocadoraDbContext())
             {
                 Cliente ClienteSerExcluido = new Cliente();
                 ClienteSerExcluido.ID = id;
                 db.Entry<Cliente>(ClienteSerExcluido).State = System.Data.Entity.EntityState.Deleted;
                 db.SaveChanges();
+                response.Sucesso = true;
             }
 
-            return new Response();
+            return response;
 
         }
 
@@ -37,11 +44,24 @@ namespace BusinessLogicalLayer
             //Validacoes 
 
             DataResponse<Cliente> response = new DataResponse<Cliente>();
+            response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            Response response1 = ValidateCliente.ValidateIdCliente(id);
+
+            if (response.Sucesso)
             {
-                response.Data.Add(db.Clientes.Where(x => x.ID == id).FirstOrDefault());
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    response.Data.Add(db.Clientes.Where(x => x.ID == id).FirstOrDefault());
+                    response.Sucesso = true;
+                }
+
+                response.Erros.Add("Erro no meu programinha");
+                response.Sucesso = false;
+
+                return response;
             }
+
             return response;
         }
 
@@ -49,9 +69,11 @@ namespace BusinessLogicalLayer
         {
             DataResponse<Cliente> response = new DataResponse<Cliente>();
 
+
             using (LocadoraDbContext db = new LocadoraDbContext())
             {
                 response.Data = db.Clientes.ToList();
+                response.Sucesso = true;
             }
 
             return response;
@@ -60,6 +82,13 @@ namespace BusinessLogicalLayer
         public Response Insert(Cliente item)
         {
             Response response = new Response();
+
+            response = ValidateCliente.ValidateClienteObj(item);
+
+            if (response.HasErrors())
+            {
+                return response;
+            }
 
             using (LocadoraDbContext db = new LocadoraDbContext())
             {
@@ -73,6 +102,13 @@ namespace BusinessLogicalLayer
         {
             Response response = new Response();
 
+
+            response = ValidateCliente.ValidateClienteObj(item);
+
+            if (response.HasErrors())
+            {
+                return response;
+            }
             using (LocadoraDbContext db = new LocadoraDbContext())
             {
                 Cliente cliente = db.Clientes.Where(x => x.ID == item.ID).FirstOrDefault();

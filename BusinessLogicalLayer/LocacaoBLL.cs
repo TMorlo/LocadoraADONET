@@ -32,7 +32,14 @@ namespace BusinessLogicalLayer
         {
             Response response = new Response();
 
-            using(LocadoraDbContext db = new LocadoraDbContext())
+            response = Validates.ValidateLocacao.ValidateIdLocacao(locacao.ID);
+
+            if (response.HasErrors())
+            {
+                return response;
+            }
+
+            using (LocadoraDbContext db = new LocadoraDbContext())
             {
                 db.Locacoes.Add(locacao);
                 db.SaveChanges();

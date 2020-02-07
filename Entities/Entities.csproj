@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Entities\Cliente.cs" />
     <Compile Include="Entities\DataResponse.cs" />
+    <Compile Include="Entities\FuncionarioService.cs" />
     <Compile Include="Entities\Response.cs" />
     <Compile Include="Enums\Classificacao.cs" />
     <Compile Include="Entities\Extensions.cs" />
