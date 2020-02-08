@@ -28,7 +28,8 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    db.Filmes.Remove(db.Filmes.Find(response.Data[0]));
+                    Filme FilmeSerExcluido = response.Data[0];
+                    db.Entry<Filme>(FilmeSerExcluido).State = System.Data.Entity.EntityState.Deleted;
                     db.SaveChanges();
                     response.Sucesso = true;
                 }
@@ -269,9 +270,10 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    Filme filme = db.Filmes.Where(x => x.ID == item.ID).FirstOrDefault();
-                    filme = item;
+                    Filme FilmeUpdate = item;
+                    db.Entry<Filme>(FilmeUpdate).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
+                    response.Sucesso = true;
                 }
             }
             catch (Exception ex)

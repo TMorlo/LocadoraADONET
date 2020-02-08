@@ -105,7 +105,7 @@ namespace WFPresentationLayer
 
         private void btnExcluir_Click(object sender, EventArgs e)
         {
-            Response response = bll.Delete(idFuncionarioASerAtualizadoExcluido);
+            DataResponse<Funcionario> response = bll.Delete(idFuncionarioASerAtualizadoExcluido);
             if (response.Sucesso)
             {
                 MessageBox.Show("Funcionário demitido com sucesso!");

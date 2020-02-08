@@ -50,17 +50,14 @@ namespace BusinessLogicalLayer.Validates
 
         public static Response ValidateLoginFuncionario(string Email, string Senha)
         {
-            Response response = new Response();
+            Response response = Security.SenhaValidator.ValidateSenha(Senha);
 
-
-            Regex sen = new Regex("@(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{4,8})$");
-            if (!sen.IsMatch(Senha))
+            if (response.HasErrors())
             {
-                response.Erros.Add("A senha informada esta inválida");
+                return response;
             }
 
             Regex rg = new Regex(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
-
 
             if (!rg.IsMatch(Email))
             {

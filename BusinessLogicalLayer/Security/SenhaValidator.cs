@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,20 +9,18 @@ namespace BusinessLogicalLayer.Security
 {
     public static class SenhaValidator
     {
-        public static string ValidateSenha(string senha, DateTime dataNascimento)
+        public static Response ValidateSenha(string senha)
         {
+            Response response = new Response();
+
+
             if (string.IsNullOrWhiteSpace(senha))
             {
-                return "Senha deve ser informada";
+                response.Erros.Add("Senha deve ser informada");
             }
             if (senha.Length < 8)
             {
-                return "Senha deve conter pelo menos 8 caracteres.";
-            }
-
-            if (senha.Contains(dataNascimento.ToString("ddMM")))
-            {
-                return "Senha não pode conter a data de nascimento";
+                response.Erros.Add("Senha deve conter pelo menos 8 caracteres.");
             }
 
             //Verificar se a senha possui ao menos 3 letras (1 maiúscula, 1 minúscula)
@@ -61,9 +60,12 @@ namespace BusinessLogicalLayer.Security
 
             if (qtdLetras < 3 || qtdMinuscula < 1 || qtdMaiuscula < 1 || qtdNumeros < 3 || qtdSimbolos < 1)
             {
-                return "A senha deve conter ao menos 3 letras (1 maiúscula e 1 minúscula), 3 números e 1 símbolo"; 
+                response.Erros.Add("A senha deve conter ao menos 3 letras (1 maiúscula e 1 minúscula), 3 números e 1 símbolo"); 
             }
-            return "";
+
+            response.Sucesso = !(response.HasErrors());
+
+            return response;
         }
 
     }

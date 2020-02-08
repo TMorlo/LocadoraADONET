@@ -31,7 +31,8 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    db.Generos.Remove(db.Generos.Find(response.Data[0]));
+                    Genero GeneroSerExcluido = response.Data[0];
+                    db.Entry<Genero>(GeneroSerExcluido).State = System.Data.Entity.EntityState.Deleted;
                     db.SaveChanges();
                     response.Sucesso = true;
                 }
@@ -114,8 +115,8 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    Genero genero = db.Generos.Where(x => x.ID == item.ID).FirstOrDefault();
-                    genero = item;
+                    Genero GeneroUpdate = item;
+                    db.Entry<Genero>(GeneroUpdate).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
                     response.Sucesso = true;
                 }

@@ -29,9 +29,10 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    db.Clientes.Remove(db.Clientes.Find(response.Data[0]));
-                    response.Sucesso = true;
+                    Cliente ClienteSerExcluido = response.Data[0];
+                    db.Entry<Cliente>(ClienteSerExcluido).State = System.Data.Entity.EntityState.Deleted;
                     db.SaveChanges();
+                    response.Sucesso = true;
                 }
             }
             catch(Exception ex)
@@ -113,8 +114,8 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    Cliente cliente = db.Clientes.Where(x => x.ID == item.ID).FirstOrDefault();
-                    cliente = item;
+                    Cliente ClienteUpdate = item;
+                    db.Entry<Cliente>(ClienteUpdate).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
                     response.Sucesso = true;
                 }

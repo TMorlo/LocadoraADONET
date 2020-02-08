@@ -26,7 +26,8 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    db.Locacoes.Remove(db.Locacoes.Find(response.Data[0]));
+                    Locacao LocacaoSerExcluido = response.Data[0];
+                    db.Entry<Locacao>(LocacaoSerExcluido).State = System.Data.Entity.EntityState.Deleted;
                     db.SaveChanges();
                     response.Sucesso = true;
                 }
@@ -136,8 +137,8 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    Locacao locacao = db.Locacoes.Where(x => x.ID == item.ID).FirstOrDefault();
-                    locacao = item;
+                    Locacao LocacaoUpdate = item;
+                    db.Entry<Locacao>(LocacaoUpdate).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
                     response.Sucesso = true;
                 }

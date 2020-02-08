@@ -56,93 +56,93 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Forms\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="Forms\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormCliente.cs">
+    <Compile Include="Forms\FormCliente.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormCliente.Designer.cs">
+    <Compile Include="Forms\FormCliente.Designer.cs">
       <DependentUpon>FormCliente.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormFilme.cs">
+    <Compile Include="Forms\FormFilme.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormFilme.Designer.cs">
+    <Compile Include="Forms\FormFilme.Designer.cs">
       <DependentUpon>FormFilme.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormFuncionario.cs">
+    <Compile Include="Forms\FormFuncionario.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormFuncionario.Designer.cs">
+    <Compile Include="Forms\FormFuncionario.Designer.cs">
       <DependentUpon>FormFuncionario.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormGenero.cs">
+    <Compile Include="Forms\FormGenero.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormGenero.Designer.cs">
+    <Compile Include="Forms\FormGenero.Designer.cs">
       <DependentUpon>FormGenero.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormLocacao.cs">
+    <Compile Include="Forms\FormLocacao.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormLocacao.Designer.cs">
+    <Compile Include="Forms\FormLocacao.Designer.cs">
       <DependentUpon>FormLocacao.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormLogin.cs">
+    <Compile Include="Forms\FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormLogin.Designer.cs">
+    <Compile Include="Forms\FormLogin.Designer.cs">
       <DependentUpon>FormLogin.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormMenu.cs">
+    <Compile Include="Forms\FormMenu.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormMenu.Designer.cs">
+    <Compile Include="Forms\FormMenu.Designer.cs">
       <DependentUpon>FormMenu.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormPesquisaCliente.cs">
+    <Compile Include="Forms\FormPesquisaCliente.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormPesquisaCliente.Designer.cs">
+    <Compile Include="Forms\FormPesquisaCliente.Designer.cs">
       <DependentUpon>FormPesquisaCliente.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormPesquisaFIlme.cs">
+    <Compile Include="Forms\FormPesquisaFIlme.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormPesquisaFIlme.Designer.cs">
+    <Compile Include="Forms\FormPesquisaFIlme.Designer.cs">
       <DependentUpon>FormPesquisaFIlme.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="FormCliente.resx">
+    <EmbeddedResource Include="Forms\FormCliente.resx">
       <DependentUpon>FormCliente.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormFilme.resx">
+    <EmbeddedResource Include="Forms\FormFilme.resx">
       <DependentUpon>FormFilme.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormFuncionario.resx">
+    <EmbeddedResource Include="Forms\FormFuncionario.resx">
       <DependentUpon>FormFuncionario.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormGenero.resx">
+    <EmbeddedResource Include="Forms\FormGenero.resx">
       <DependentUpon>FormGenero.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormLocacao.resx">
+    <EmbeddedResource Include="Forms\FormLocacao.resx">
       <DependentUpon>FormLocacao.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormLogin.resx">
+    <EmbeddedResource Include="Forms\FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormMenu.resx">
+    <EmbeddedResource Include="Forms\FormMenu.resx">
       <DependentUpon>FormMenu.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormPesquisaCliente.resx">
+    <EmbeddedResource Include="Forms\FormPesquisaCliente.resx">
       <DependentUpon>FormPesquisaCliente.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormPesquisaFIlme.resx">
+    <EmbeddedResource Include="Forms\FormPesquisaFIlme.resx">
       <DependentUpon>FormPesquisaFIlme.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -67,7 +67,8 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    db.Funcionarios.Remove(db.Funcionarios.Find(response.Data[0]));
+                    Funcionario FuncionarioSerExcluido = response.Data[0];
+                    db.Entry<Funcionario>(FuncionarioSerExcluido).State = System.Data.Entity.EntityState.Deleted;
                     db.SaveChanges();
                     response.Sucesso = true;
                 }
@@ -149,8 +150,8 @@ namespace BusinessLogicalLayer
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    Funcionario funcionario = db.Funcionarios.Where(x => x.ID == item.ID).FirstOrDefault();
-                    funcionario = item;
+                    Funcionario FuncionarioUpdate = item;
+                    db.Entry<Funcionario>(FuncionarioUpdate).State = System.Data.Entity.EntityState.Modified;
                     db.SaveChanges();
                     response.Sucesso = true;
                 }
