@@ -8,7 +8,7 @@ namespace Entities
 {
     //Classe utilizada como container para guardar nossos métodos
     //de extensão (métodos que aparecem nos objetos da Microsoft)
-    public static class ExtensionJj98gfdjg98fdjgfd
+    public static class Extensions
     {
         public static int ToInt(this string val)
         {

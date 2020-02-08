@@ -52,11 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClienteBLL.cs" />
-    <Compile Include="FilmeBLL.cs" />
-    <Compile Include="FuncionarioBLL.cs" />
-    <Compile Include="GeneroBLL.cs" />
-    <Compile Include="LocacaoBLL.cs" />
+    <Compile Include="ClassBLL\ClienteBLL.cs" />
+    <Compile Include="ClassBLL\FilmeBLL.cs" />
+    <Compile Include="ClassBLL\FuncionarioBLL.cs" />
+    <Compile Include="ClassBLL\GeneroBLL.cs" />
+    <Compile Include="ClassBLL\LocacaoBLL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\HashUtils.cs" />
     <Compile Include="Security\SenhaValidator.cs" />
