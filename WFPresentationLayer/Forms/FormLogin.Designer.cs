@@ -53,7 +53,7 @@
             this.label1.Location = new System.Drawing.Point(42, 72);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 32);
+            this.label1.Size = new System.Drawing.Size(58, 25);
             this.label1.TabIndex = 1;
             this.label1.Text = "Email";
             // 
@@ -62,16 +62,18 @@
             this.txtEmail.Location = new System.Drawing.Point(46, 129);
             this.txtEmail.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(420, 38);
+            this.txtEmail.Size = new System.Drawing.Size(420, 32);
             this.txtEmail.TabIndex = 2;
+            this.txtEmail.Text = "luizfelipekohler03@gmail.com";
             // 
             // txtSenha
             // 
             this.txtSenha.Location = new System.Drawing.Point(46, 291);
             this.txtSenha.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtSenha.Name = "txtSenha";
-            this.txtSenha.Size = new System.Drawing.Size(420, 38);
+            this.txtSenha.Size = new System.Drawing.Size(420, 32);
             this.txtSenha.TabIndex = 4;
+            this.txtSenha.Text = "Abcd123+";
             this.txtSenha.UseSystemPasswordChar = true;
             // 
             // label2
@@ -80,13 +82,13 @@
             this.label2.Location = new System.Drawing.Point(42, 234);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(81, 32);
+            this.label2.Size = new System.Drawing.Size(64, 25);
             this.label2.TabIndex = 3;
             this.label2.Text = "Senha";
             // 
             // FormLogin
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 31F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(565, 594);
             this.Controls.Add(this.txtSenha);
