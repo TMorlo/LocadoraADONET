@@ -5,63 +5,49 @@ using Entities.Enums;
 using Entities.ResultSets;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace BusinessLogicalLayer
 {
     public class FilmeBLL : IEntityCRUD<Filme>, IFilmeService
     {
-        public Response Delete(int id)
+        public DataResponse<Filme> Delete(int id)
         {
             //Validacoes 
 
-            Response response = new Response();
 
-            response = Validates.ValidateFilme.ValidateIdFilme(id);
+            DataResponse<Filme> response = Validates.ValidateFilme.ValidateIdFilme(id);
 
             if (response.HasErrors())
             {
                 return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                Filme filmeSerExcluido = new Filme();
-                filmeSerExcluido.ID = id;
-                db.Entry<Filme>(filmeSerExcluido).State = System.Data.Entity.EntityState.Deleted;
-                db.SaveChanges();
-                response.Sucesso = true;
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    db.Filmes.Remove(db.Filmes.Find(response.Data[0]));
+                    db.SaveChanges();
+                    response.Sucesso = true;
+                }
             }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+
             return response;
 
         }
 
         public DataResponse<Filme> GetByID(int id)
         {
-            //Validacoes 
 
-            DataResponse<Filme> response = new DataResponse<Filme>();
-            response.Sucesso = false;
-
-
-            Response response1 = new Response();
-
-            response1 = Validates.ValidateFilme.ValidateIdFilme(id);
-
-            if (response.HasErrors())
-            {
-                return response;
-            }
-
-            using (LocadoraDbContext db = new LocadoraDbContext())
-            {
-                response.Data.Add(db.Filmes.Where(x => x.ID == id).FirstOrDefault());
-                response.Sucesso = true;
-            }
-
-            response.Sucesso = false;
-
-            return response;
+            return Validates.ValidateFilme.ValidateIdFilme(id);
         }
 
         public DataResponse<Filme> GetData()
@@ -69,13 +55,21 @@ namespace BusinessLogicalLayer
             DataResponse<Filme> response = new DataResponse<Filme>();
             response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                response.Data = db.Filmes.ToList();
-                response.Sucesso = true;
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    response.Data = db.Filmes.ToList();
+                    response.Sucesso = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
             return response;
-
         }
 
         public DataResponse<FilmeResultSet> GetFilmes()
@@ -83,22 +77,31 @@ namespace BusinessLogicalLayer
             DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
             response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                List<Filme> filmes = db.Filmes.ToList();
-
-                foreach (Filme filme in filmes)
+                using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    FilmeResultSet filmeResultSet = new FilmeResultSet()
+                    List<Filme> filmes = db.Filmes.ToList();
+
+                    foreach (Filme filme in filmes)
                     {
-                        Nome = filme.Nome,
-                        Classificacao = filme.Classificacao,
-                        Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
-                        ID = filme.ID
-                    };
-                    response.Data.Add(filmeResultSet);
-                    response.Sucesso = true;
+                        FilmeResultSet filmeResultSet = new FilmeResultSet()
+                        {
+                            Nome = filme.Nome,
+                            Classificacao = filme.Classificacao,
+                            Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
+                            ID = filme.ID
+                        };
+                        response.Data.Add(filmeResultSet);
+                        response.Sucesso = true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
 
             return response;
@@ -109,23 +112,32 @@ namespace BusinessLogicalLayer
             DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
             response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                List<Filme> filmes = db.Filmes.Where(x => x.Classificacao.Equals(classificacao)).ToList();
-
-                foreach (Filme filme in filmes)
+                using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    FilmeResultSet filmeResultSet = new FilmeResultSet()
-                    {
-                        Nome = filme.Nome,
-                        Classificacao = filme.Classificacao,
-                        Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
-                        ID = filme.ID
-                    };
-                    response.Data.Add(filmeResultSet);
+                    List<Filme> filmes = db.Filmes.Where(x => x.Classificacao.Equals(classificacao)).ToList();
 
-                    response.Sucesso = true;
+                    foreach (Filme filme in filmes)
+                    {
+                        FilmeResultSet filmeResultSet = new FilmeResultSet()
+                        {
+                            Nome = filme.Nome,
+                            Classificacao = filme.Classificacao,
+                            Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
+                            ID = filme.ID
+                        };
+                        response.Data.Add(filmeResultSet);
+
+                        response.Sucesso = true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
 
             return response;
@@ -136,30 +148,40 @@ namespace BusinessLogicalLayer
             DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
             response.Sucesso = false;
 
-            Response response1 = Validates.ValidateGenero.ValidateIdGenero(genero);
+            Response responseIdGenero = Validates.ValidateGenero.ValidateIdGenero(genero);
 
-            if (response1.HasErrors())
+            if (responseIdGenero.HasErrors())
             {
+                response.Erros.Add(responseIdGenero.GetErrorMessage());
                 return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                List<Filme> filmes = db.Filmes.Where(x => x.GeneroID == genero).ToList();
-
-                foreach (Filme filme in filmes)
+                using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    FilmeResultSet filmeResultSet = new FilmeResultSet()
-                    {
-                        Nome = filme.Nome,
-                        Classificacao = filme.Classificacao,
-                        Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
-                        ID = filme.ID
-                    };
+                    List<Filme> filmes = db.Filmes.Where(x => x.GeneroID == genero).ToList();
 
-                    response.Data.Add(filmeResultSet);
-                    response.Sucesso = true;
+                    foreach (Filme filme in filmes)
+                    {
+                        FilmeResultSet filmeResultSet = new FilmeResultSet()
+                        {
+                            Nome = filme.Nome,
+                            Classificacao = filme.Classificacao,
+                            Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
+                            ID = filme.ID
+                        };
+
+                        response.Data.Add(filmeResultSet);
+                        response.Sucesso = true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
 
             return response;
@@ -170,23 +192,38 @@ namespace BusinessLogicalLayer
             DataResponse<FilmeResultSet> response = new DataResponse<FilmeResultSet>();
             response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            if (string.IsNullOrWhiteSpace(nome))
             {
-                List<Filme> filmes = db.Filmes.Where(x => x.Nome.Contains(nome)).ToList();
+                response.Erros.Add("Infome o nome de algum filme para pesquisar");
+                return response;
+            }
 
-                foreach (Filme filme in filmes)
+            try
+            {
+                using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    FilmeResultSet filmeResultSet = new FilmeResultSet()
-                    {
-                        Nome = filme.Nome,
-                        Classificacao = filme.Classificacao,
-                        Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
-                        ID = filme.ID
-                    };
+                    List<Filme> filmes = db.Filmes.Where(x => x.Nome.Contains(nome)).ToList();
 
-                    response.Data.Add(filmeResultSet);
-                    response.Sucesso = true;
+                    foreach (Filme filme in filmes)
+                    {
+                        FilmeResultSet filmeResultSet = new FilmeResultSet()
+                        {
+                            Nome = filme.Nome,
+                            Classificacao = filme.Classificacao,
+                            Genero = db.Generos.FirstOrDefault(x => x.ID == filme.GeneroID).Nome,
+                            ID = filme.ID
+                        };
+
+                        response.Data.Add(filmeResultSet);
+                        response.Sucesso = true;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
 
             return response;
@@ -194,40 +231,54 @@ namespace BusinessLogicalLayer
 
         public Response Insert(Filme item)
         {
-            Response response = new Response();
-
-            response = Validates.ValidateFilme.ValidateFilmeObj(item);
+            Response response = Validates.ValidateFilme.ValidateFilmeObj(item);
 
             if (response.HasErrors())
             {
                 return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                db.Filmes.Add(item);
-                db.SaveChanges();
-                response.Sucesso = true;
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    db.Filmes.Add(item);
+                    db.SaveChanges();
+                    response.Sucesso = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
             return response;
         }
 
         public Response Update(Filme item)
         {
-            Response response = new Response();
-
-            response = Validates.ValidateFilme.ValidateFilmeObj(item);
+            Response response = Validates.ValidateFilme.ValidateFilmeObj(item);
 
             if (response.HasErrors())
             {
                 return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                Filme filme = db.Filmes.Where(x => x.ID == item.ID).FirstOrDefault();
-                filme = item;
-                db.SaveChanges();
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    Filme filme = db.Filmes.Where(x => x.ID == item.ID).FirstOrDefault();
+                    filme = item;
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
             return response;
         }

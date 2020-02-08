@@ -2,8 +2,9 @@
 using DataAccessLayer;
 using Entities;
 using Entities.Entities;
+using System;
+using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace BusinessLogicalLayer
 {
@@ -13,12 +14,10 @@ namespace BusinessLogicalLayer
     /// </summary>
     public class ClienteBLL : IEntityCRUD<Cliente>
     {
-        public Response Delete(int id)
+        public DataResponse<Cliente> Delete(int id)
         {
-            //Validacoes 
 
-            Response response = new Response();
-
+            DataResponse<Cliente> response = new DataResponse<Cliente>();
             response = ValidateCliente.ValidateIdCliente(id);
 
             if (response.HasErrors())
@@ -26,13 +25,20 @@ namespace BusinessLogicalLayer
                 return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                Cliente ClienteSerExcluido = new Cliente();
-                ClienteSerExcluido.ID = id;
-                db.Entry<Cliente>(ClienteSerExcluido).State = System.Data.Entity.EntityState.Deleted;
-                db.SaveChanges();
-                response.Sucesso = true;
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    db.Clientes.Remove(db.Clientes.Find(response.Data[0]));
+                    response.Sucesso = true;
+                    db.SaveChanges();
+                }
+            }
+            catch(Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
 
             return response;
@@ -41,39 +47,25 @@ namespace BusinessLogicalLayer
 
         public DataResponse<Cliente> GetByID(int id)
         {
-            //Validacoes 
-
-            DataResponse<Cliente> response = new DataResponse<Cliente>();
-            response.Sucesso = false;
-
-            Response response1 = ValidateCliente.ValidateIdCliente(id);
-
-            if (response.Sucesso)
-            {
-                using (LocadoraDbContext db = new LocadoraDbContext())
-                {
-                    response.Data.Add(db.Clientes.Where(x => x.ID == id).FirstOrDefault());
-                    response.Sucesso = true;
-                }
-
-                response.Erros.Add("Erro no meu programinha");
-                response.Sucesso = false;
-
-                return response;
-            }
-
-            return response;
+            return ValidateCliente.ValidateIdCliente(id); ;
         }
 
         public DataResponse<Cliente> GetData()
         {
             DataResponse<Cliente> response = new DataResponse<Cliente>();
 
-
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try{
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    response.Data = db.Clientes.ToList();
+                    response.Sucesso = true;
+                }
+            }
+            catch (Exception ex)
             {
-                response.Data = db.Clientes.ToList();
-                response.Sucesso = true;
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
 
             return response;
@@ -81,40 +73,59 @@ namespace BusinessLogicalLayer
 
         public Response Insert(Cliente item)
         {
-            Response response = new Response();
 
-            response = ValidateCliente.ValidateClienteObj(item);
+            Response response = ValidateCliente.ValidateClienteObj(item);
 
             if (response.HasErrors())
             {
                 return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                db.Clientes.Add(item);
-                db.SaveChanges();
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    db.Clientes.Add(item);
+                    db.SaveChanges();
+                    response.Sucesso = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
             return response;
         }
 
         public Response Update(Cliente item)
         {
-            Response response = new Response();
 
-
-            response = ValidateCliente.ValidateClienteObj(item);
+            Response response = ValidateCliente.ValidateClienteObj(item);
 
             if (response.HasErrors())
             {
                 return response;
             }
-            using (LocadoraDbContext db = new LocadoraDbContext())
+
+            try
             {
-                Cliente cliente = db.Clientes.Where(x => x.ID == item.ID).FirstOrDefault();
-                cliente = item;
-                db.SaveChanges();
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    Cliente cliente = db.Clientes.Where(x => x.ID == item.ID).FirstOrDefault();
+                    cliente = item;
+                    db.SaveChanges();
+                    response.Sucesso = true;
+                }
             }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+
             return response;
         }
     }

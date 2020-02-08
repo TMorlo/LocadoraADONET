@@ -4,6 +4,7 @@ using Entities;
 using Entities.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,84 +16,94 @@ namespace BusinessLogicalLayer
         public DataResponse<Funcionario> Autenticar(string email, string senha)
         {
 
-            DataResponse<Funcionario> FuncionarioLogar = new DataResponse<Funcionario>();
-            FuncionarioLogar.Sucesso = false;
+            DataResponse<Funcionario> response = new DataResponse<Funcionario>();
+            response.Sucesso = false;
 
-            Response response = Validates.ValidateFuncionario.ValidateLoginFuncionario(email, senha);
+            Response responseValidateLogin = Validates.ValidateFuncionario.ValidateLoginFuncionario(email, senha);
 
-            if (response.HasErrors())
+            if (responseValidateLogin.HasErrors())
             {
-                FuncionarioLogar.Erros.Add(response.GetErrorMessage());
-                return FuncionarioLogar;
+                response.Erros.Add(responseValidateLogin.GetErrorMessage());
+                return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                Funcionario f = new Funcionario();
-
-                f = db.Funcionarios.FirstOrDefault(x => (x.Email == email && x.Senha == senha));
-
-                if (f == null)
+                using (LocadoraDbContext db = new LocadoraDbContext())
                 {
-                    FuncionarioLogar.Sucesso = false;
-                    FuncionarioLogar.Erros.Add("O funcionario nao foi encontrado");
-                    return FuncionarioLogar;
+                    Funcionario funcionarioLogar = db.Funcionarios.FirstOrDefault(x => (x.Email == email) && (x.Senha == senha));
+                    if (funcionarioLogar != null)
+                    {
+                        response.Data.Add(funcionarioLogar);
+                        response.Sucesso = true;
+                        User.FuncionarioLogado = funcionarioLogar;
+                        return response;
+                    }
                 }
-
-                FuncionarioLogar.Data.Add(f);
-                User.FuncionarioLogado = FuncionarioLogar.Data[0];
-                FuncionarioLogar.Sucesso = true;
-
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
 
-            return FuncionarioLogar;
+            response.Erros.Add("Erro na senha ou no Email");
+            return response;
+
         }
 
-        public Response Delete(int id)
+        public DataResponse<Funcionario> Delete(int id)
         {
-            //Validacoes 
 
-            Response response = new Response();
-
-            response = Validates.ValidateFuncionario.ValidateIdFuncionario(id);
+            DataResponse<Funcionario> response = Validates.ValidateFuncionario.ValidateIdFuncionario(id);
 
             if (response.HasErrors())
             {
                 return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                Funcionario funcionarioSerExcluido = new Funcionario();
-                funcionarioSerExcluido.ID = id;
-                db.Entry<Funcionario>(funcionarioSerExcluido).State = System.Data.Entity.EntityState.Deleted;
-                db.SaveChanges();
-                response.Sucesso = true;
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    db.Funcionarios.Remove(db.Funcionarios.Find(response.Data[0]));
+                    db.SaveChanges();
+                    response.Sucesso = true;
+                }
             }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+
             return response;
 
         }
 
         public DataResponse<Funcionario> GetByID(int id)
         {
-            //Validacoes 
-
-            DataResponse<Funcionario> response = new DataResponse<Funcionario>();
-
-            using (LocadoraDbContext db = new LocadoraDbContext())
-            {
-                response.Data.Add(db.Funcionarios.Where(x => x.ID == id).FirstOrDefault());
-            }
-            return response;
+            return Validates.ValidateFuncionario.ValidateIdFuncionario(id);
         }
 
         public DataResponse<Funcionario> GetData()
         {
             DataResponse<Funcionario> response = new DataResponse<Funcionario>();
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                response.Data = db.Funcionarios.ToList();
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    response.Data = db.Funcionarios.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
             }
 
             return response;
@@ -102,17 +113,27 @@ namespace BusinessLogicalLayer
         {
             Response response = Validates.ValidateFuncionario.ValidateFuncionarioObj(item);
 
-            if (!response.Sucesso)
+            if (response.HasErrors())
             {
                 return response;
             }
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                db.Funcionarios.Add(item);
-                db.SaveChanges();
-                response.Sucesso = true;
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    db.Funcionarios.Add(item);
+                    db.SaveChanges();
+                    response.Sucesso = true;
+                }
             }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+
             return response;
         }
 
@@ -120,19 +141,27 @@ namespace BusinessLogicalLayer
         {
             Response response = Validates.ValidateFuncionario.ValidateFuncionarioObj(item);
 
-            if (!response.Sucesso)
+            if (response.HasErrors())
             {
                 return response;
             }
-
-
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            try
             {
-                Funcionario funcionario = db.Funcionarios.Where(x => x.ID == item.ID).FirstOrDefault();
-                funcionario = item;
-                db.SaveChanges();
-                response.Sucesso = true;
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    Funcionario funcionario = db.Funcionarios.Where(x => x.ID == item.ID).FirstOrDefault();
+                    funcionario = item;
+                    db.SaveChanges();
+                    response.Sucesso = true;
+                }
             }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+
             return response;
         }
     }

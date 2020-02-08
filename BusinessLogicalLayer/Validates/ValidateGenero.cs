@@ -3,6 +3,7 @@ using Entities;
 using Entities.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -35,20 +36,37 @@ namespace BusinessLogicalLayer.Validates
             return response;
         }
 
-        public static Response ValidateIdGenero(int id)
+        public static DataResponse<Genero> ValidateIdGenero(int id)
         {
-            Response response = new Response();
+            DataResponse<Genero> response = new DataResponse<Genero>();
             response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            if(id <= 0)
             {
-                Genero genero = db.Generos.FirstOrDefault(x => x.ID == id);
-                if (genero != null)
-                {
-                    response.Sucesso = true;
-                }
+                response.Erros.Add("Informe um ID valido para funcionarios");
+                return response;
             }
 
+            try
+            {
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    Genero genero = db.Generos.FirstOrDefault(x => x.ID == id);
+                    if (genero != null)
+                    {
+                        response.Data.Add(genero);
+                        response.Sucesso = true;
+                        return response;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+            response.Erros.Add("nenhum funcionario foi encontrado com esse id");
             return response;
         }
     }

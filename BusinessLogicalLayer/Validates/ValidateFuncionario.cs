@@ -2,6 +2,7 @@
 using Entities;
 using Entities.Entities;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -11,18 +12,23 @@ namespace BusinessLogicalLayer.Validates
     {
         public static Response ValidateFuncionarioObj(Funcionario item)
         {
-            Response response = new Response();
+            Response response = ValidateLoginFuncionario(item.Email, item.Senha);
+
+            if (response.HasErrors())
+            {
+                return response;
+            }
 
             if (string.IsNullOrWhiteSpace(item.CPF))
             {
-                response.Erros.Add("O cpf deve ser informado");
+                response.Erros.Add("O CPF deve ser informado");
             }
             else
             {
                 item.CPF = item.CPF.Trim();
                 if (!item.CPF.IsCpf())
                 {
-                    response.Erros.Add("O cpf informado é inválido.");
+                    response.Erros.Add("O CPF informado é inválido.");
 
                     response.Sucesso = false;
                 }
@@ -33,13 +39,10 @@ namespace BusinessLogicalLayer.Validates
 
             if (idade < 14)
             {
-                response.Erros.Add("Idade Insuficiente para trabalhar vai pra casa jogar CS o crianção");
+                response.Erros.Add("O funcionario deve conter pelo menos 14 anos para começar a trabalhar");
             }
 
-            if (response.Erros.Count == 0)
-            {
-                response.Sucesso = true;
-            }
+            response.Sucesso = !(response.HasErrors());
 
             return response;
 
@@ -50,39 +53,57 @@ namespace BusinessLogicalLayer.Validates
             Response response = new Response();
 
 
-            //Regex sen = new Regex("@(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{4,8})$");
-            //if (!sen.IsMatch(Senha))
-            //{
-            //    response.Erros.Add("SENHA INVÁLIDA");
-            //}
+            Regex sen = new Regex("@(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{4,8})$");
+            if (!sen.IsMatch(Senha))
+            {
+                response.Erros.Add("A senha informada esta inválida");
+            }
 
-            //Regex rg = new Regex(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
+            Regex rg = new Regex(@"^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$");
 
 
-            //if (!rg.IsMatch(Email))
-            //{
-            //    response.Erros.Add("Email informado está invalido !!");
-            //}
+            if (!rg.IsMatch(Email))
+            {
+                response.Erros.Add("Email informado está invalido");
+            }
 
             response.Sucesso = !(response.HasErrors());
 
             return response;
         }
 
-        public static Response ValidateIdFuncionario(int id)
+        public static DataResponse<Funcionario> ValidateIdFuncionario(int id)
         {
-            Response response = new Response();
+            DataResponse<Funcionario> response = new DataResponse<Funcionario>();
             response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            if(id <= 0)
             {
-                Funcionario funcionario = db.Funcionarios.FirstOrDefault(x => x.ID == id);
-                if (funcionario != null)
-                {
-                    response.Sucesso = true;
-                }
+                response.Erros.Add("Informe um ID valido para funcionarios");
+                return response;
             }
 
+            try
+            {
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    Funcionario funcionario = db.Funcionarios.FirstOrDefault(x => x.ID == id);
+                    if (funcionario != null)
+                    {
+                        response.Data.Add(funcionario);
+                        response.Sucesso = true;
+                        return response;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+
+            response.Erros.Add("nenhum funcionario foi encontrado com esse id");
             return response;
         }
     }

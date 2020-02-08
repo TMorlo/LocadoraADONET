@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicalLayer.Security
 {
-    public class User
+    public static class User
     {
         //Como esta propriedade é estática, ela nunca morrerá em uma
         //aplicação Desktop.

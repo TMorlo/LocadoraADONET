@@ -12,7 +12,7 @@ namespace Entities
     {
         Response Insert(T item);
         Response Update(T item);
-        Response Delete(int id);
+        DataResponse<T> Delete(int id);
         DataResponse<T> GetData();
         DataResponse<T> GetByID(int id);
     }

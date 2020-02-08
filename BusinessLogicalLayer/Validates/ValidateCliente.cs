@@ -3,6 +3,7 @@ using Entities;
 using Entities.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -61,20 +62,38 @@ namespace BusinessLogicalLayer.Validates
             return response;
         }
 
-        public static Response ValidateIdCliente(int id)
+        public static DataResponse<Cliente> ValidateIdCliente(int id)
         {
-            Response response = new Response();
+            DataResponse<Cliente> response = new DataResponse<Cliente>();
             response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            if(id <= 0)
             {
-                Cliente cliente = db.Clientes.FirstOrDefault(x => x.ID == id);
-                if(cliente != null)
-                {
-                    response.Sucesso = true;
-                }
+                response.Erros.Add("ID do cliente esta invalido");
+                return response;
             }
 
+            try
+            {
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    Cliente cliente = db.Clientes.FirstOrDefault(x => x.ID == id);
+                    if (cliente != null)
+                    {
+                        response.Data.Add(cliente);
+                        response.Sucesso = true;
+                        return response;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+
+            response.Erros.Add("nenhum cliente foi encontrado com esse id");
             return response;
         }
     }

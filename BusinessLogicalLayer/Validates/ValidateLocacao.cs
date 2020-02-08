@@ -3,6 +3,7 @@ using Entities;
 using Entities.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,20 +39,38 @@ namespace BusinessLogicalLayer.Validates
             return response;
         }
 
-        public static Response ValidateIdLocacao(int id)
+        public static DataResponse<Locacao> ValidateIdLocacao(int id)
         {
-            Response response = new Response();
+            DataResponse<Locacao> response = new DataResponse<Locacao>();
             response.Sucesso = false;
 
-            using (LocadoraDbContext db = new LocadoraDbContext())
+            if (id <= 0)
             {
-                Locacao locacoes = db.Locacoes.FirstOrDefault(x => x.ID == id);
-                if (locacoes != null)
-                {
-                    response.Sucesso = true;
-                }
+                response.Erros.Add("Informe um ID valido para Locacao");
+                return response;
             }
 
+            try
+            {
+                using (LocadoraDbContext db = new LocadoraDbContext())
+                {
+                    Locacao locacao = db.Locacoes.FirstOrDefault(x => x.ID == id);
+                    if (locacao != null)
+                    {
+                        response.Data.Add(locacao);
+                        response.Sucesso = true;
+                        return response;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("log.txt", ex.Message);
+                response.Sucesso = false;
+                response.Erros.Add("Erro no meu programinha");
+            }
+
+            response.Erros.Add("nenhuma locacao foi encontrado com esse id");
             return response;
         }
     }
