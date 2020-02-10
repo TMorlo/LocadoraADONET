@@ -14,7 +14,7 @@ namespace DataAccessLayer
     {
         public static string ConnectionString
         {
-            get { return @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=XXXLOCADORATESTE;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"; }
+            get { return @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=TrioTotoso;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"; }
         }
     }
 }

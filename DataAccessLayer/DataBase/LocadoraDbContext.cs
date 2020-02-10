@@ -27,21 +27,8 @@ namespace DataAccessLayer
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Configurations.AddFromAssembly(Assembly.GetExecutingAssembly());
 
-            modelBuilder.Entity<Locacao>()
-            .HasMany<Filme>(x => x.Filmes)
-            .WithMany(y => y.Locacao).Map(z =>
-            {
-                z.MapLeftKey("LocacaoID");
-                z.MapRightKey("FilmesID");
-                z.ToTable("FILMES_LOACACOES");
-            });
 
-            modelBuilder.Entity<Locacao>()
-            .HasRequired<Cliente>(s => s.Cliente)
-            .WithMany(g => g.Locacao)
-            .HasForeignKey<int>(s => s.ClienteID);
 
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

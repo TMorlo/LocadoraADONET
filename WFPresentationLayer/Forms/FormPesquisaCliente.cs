@@ -33,6 +33,9 @@ namespace WFPresentationLayer
         private void FormPesquisaCliente_Load(object sender, EventArgs e)
         {
             this.dataGridView1.DataSource = new ClienteBLL().GetData().Data;
+
+            //var colunaSerExcluida = dataGridView1.Columns;
+            //this.dataGridView1.Columns.Remove(colunaSerExcluida[6]);
         }
     }
 }

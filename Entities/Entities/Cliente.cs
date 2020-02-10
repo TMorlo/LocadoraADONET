@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace Entities
         public string Email { get; set; }
         public DateTime DataNascimento{ get; set; }
         public bool EhAtivo { get; set; }
+        [Browsable(false)]
         public virtual ICollection<Locacao> Locacao { get; set; }
 
         public Cliente()
