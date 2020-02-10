@@ -66,7 +66,7 @@ namespace WFPresentationLayer
         private void button1_Click(object sender, EventArgs e)
         {
             Locacao locacao = new Locacao();
-            locacao.Cliente = this.cliente;
+            locacao.ClienteID = this.txtClienteID.Text.ToInt();
             locacao.Filmes = listFilmesSelecionados.ToList();
             locacao.FoiPago = chkFoiPago.Checked;
             locacao.Funcionario = User.FuncionarioLogado;

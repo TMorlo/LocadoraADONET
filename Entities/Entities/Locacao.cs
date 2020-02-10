@@ -14,6 +14,7 @@ namespace Entities
         }
 
         public int ID { get; set; }
+        public int ClienteID { get; set; }
         public Cliente Cliente { get; set; }
         public Funcionario Funcionario { get; set; }
         public double Preco { get; set; }
@@ -21,7 +22,7 @@ namespace Entities
         public DateTime DataLocacao { get; set; }
         public DateTime DataPrevistaDevolucao { get; set; }
         public DateTime? DataDevolucao { get; set; }
-        public  virtual List<Filme> Filmes { get; set; }
+        public  virtual ICollection<Filme> Filmes { get; set; }
         public bool FoiPago { get; set; }
 
        

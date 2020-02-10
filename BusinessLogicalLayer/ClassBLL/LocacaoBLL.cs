@@ -45,17 +45,35 @@ namespace BusinessLogicalLayer
 
         public Response EfetuarLocacao(Locacao locacao)
         {
-            Response response = Validates.ValidateLocacao.ValidateLocacaoObj(locacao);
 
-            if (response.HasErrors())
-            {
-                return response;
-            }
+            Response response = new Response();
 
             try
             {
                 using (LocadoraDbContext db = new LocadoraDbContext())
                 {
+                    locacao.Cliente = db.Clientes.FirstOrDefault(x => x.ID == locacao.ClienteID);
+
+                    //Response original, precisa validar
+
+                    response = Validates.ValidateLocacao.ValidateLocacaoObj(locacao);
+
+                    //Response teste, nao precisa validar
+                    //Response response = new Response();
+
+                    if (response.HasErrors())
+                    {
+                        return response;
+                    }
+
+                    List<Filme> FilmesTrack = new List<Filme>();
+
+                    foreach (Filme f in locacao.Filmes)
+                    {
+                        FilmesTrack.Add(db.Filmes.FirstOrDefault(x => x.ID == f.ID));
+                    }
+
+                    locacao.Filmes = FilmesTrack;
                     db.Locacoes.Add(locacao);
                     db.SaveChanges();
                     response.Sucesso = true;

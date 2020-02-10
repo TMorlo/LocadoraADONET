@@ -15,6 +15,8 @@ namespace Entities
         public Classificacao Classificacao { get; set; }
         public int Duracao { get; set; }
         public int GeneroID { get; set; }
+        public virtual ICollection<Locacao> Locacao { get; set; }
+
 
         /// <summary>
         /// Calcula a devolução do filme

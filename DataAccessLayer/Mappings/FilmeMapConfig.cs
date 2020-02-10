@@ -16,6 +16,7 @@ namespace DataAccessLayer.Mappings
             this.ToTable("FILMES");
 
             this.Property(f => f.Nome).HasMaxLength(50).IsRequired().IsUnicode(false);
+            this.Property(f => f.GeneroID).IsRequired();
             this.Property(f => f.Duracao).IsRequired();
             this.Property(f => f.Classificacao).IsRequired();
             this.Property(f => f.DataLancamento).HasColumnType("date").IsRequired();

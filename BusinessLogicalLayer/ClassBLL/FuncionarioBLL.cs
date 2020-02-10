@@ -128,6 +128,7 @@ namespace BusinessLogicalLayer
                     response.Sucesso = true;
                 }
             }
+            
             catch (Exception ex)
             {
                 File.WriteAllText("log.txt", ex.Message);
