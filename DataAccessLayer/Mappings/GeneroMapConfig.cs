@@ -15,6 +15,7 @@ namespace DataAccessLayer.Mappings
             
             this.ToTable("GENEROS");
             this.Property(g => g.Nome).HasMaxLength(50).IsRequired().IsUnicode(false);
+            this.HasIndex(g => g.Nome).IsUnique();
            
         }
     }

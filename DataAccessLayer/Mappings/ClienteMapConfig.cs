@@ -15,6 +15,7 @@ namespace DataAccessLayer.Mappings
             this.ToTable("CLIENTES");
             this.Property(c => c.Nome).HasMaxLength(50).IsRequired().IsUnicode(false);
             this.Property(c => c.Email).HasMaxLength(70).IsRequired().IsUnicode(false);
+            this.HasIndex(c => c.CPF).IsUnique();
             this.Property(c => c.CPF).IsFixedLength().HasMaxLength(14);
             this.Property(c => c.DataNascimento).HasColumnType("date").IsRequired();
         }
